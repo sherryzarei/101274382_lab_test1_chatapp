@@ -5,7 +5,7 @@ import Register from "./screens/Register";
 import Error from "./screens/Error";
 import Dashboard from "./screens/Dashboard";
 import AddGroup from "./screens/AddGroup";
-import Chat from "./screens/chat";
+import Chat from "./screens/Chat";
 import AuthRoute from "./components/AuthRoute" 
 
 function App() {

@@ -1,19 +1,21 @@
-const express = require("express"); 
-const router = express.Router(); 
-const userModel = require("../model/user.js"); 
-const bcrypt = require("bcrypt"); 
+const express = require("express"); // Import express
+const router = express.Router(); // Create a router object
+const userModel = require("../model/user.js"); // Import user.js
+const bcrypt = require("bcrypt"); // Import bcrypt
 const jwt = require('jsonwebtoken');
 
 
 //Creat a new user
 router.post("/signup", async (req, res) => {
-  const saltRounds = 10; 
-  const plainPassword = req.body.password; 
+  const saltRounds = 10; // Number of salt rounds, higher is more secure
+  const plainPassword = req.body.password; // Replace with the actual user's password
   try {
 
+    // Hash the password
     salt = bcrypt.genSaltSync(saltRounds)
     hashedPassword = bcrypt.hashSync(plainPassword, salt)
-
+      
+    // Create a new user
     const user = await userModel.create({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -42,7 +44,9 @@ router.post("/signup", async (req, res) => {
 //login a user
 router.post("/login", async (req, res) => {
   const { username, password, email } = req.body;
+  // console.log(req.body);
   try {
+    // Find the user by username or email
     const user = await userModel.findOne({
       $or: [{ username: username }, { email: username }],
     });
@@ -53,6 +57,7 @@ router.post("/login", async (req, res) => {
         .json({ message: "Authentication failed, User Not Found." });
     }
 
+    // Compare the user's password with the hashed password
     let passwordMatch;
 
       await bcrypt.compare(password, user.password).then(
@@ -72,6 +77,7 @@ router.post("/login", async (req, res) => {
       });
     } else {
 
+      // User is authenticated, you can generate a token or set a session here
       const token = jwt.sign({ username: user.username, id: user._id }, '01001101', { expiresIn: '1h' });
 
       return res.status(200).json({
@@ -87,6 +93,8 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
+// Get all users
 router.get("/users", async (req, res) => {
   try {
     const users = await userModel.find({});
@@ -102,4 +110,4 @@ router.get("/users", async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router; // Export router object
